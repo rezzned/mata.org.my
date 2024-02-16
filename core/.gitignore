@@ -1,0 +1,16 @@
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+*.zip
+/.idea
+.env
+/core/storage/app/member_external_cert/
+*_ide_helper*.php
+test.php

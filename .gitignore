@@ -1,0 +1,11 @@
+assets/lfm/files
+*.zip
+/.idea
+core/storage/app/member_external_cert/
+assets/front/certificate
+assets/front/document
+assets/front/invoices
+assets/front/img
+assets/front/receipt
+assets/admin/img/propics/*
+*.gz

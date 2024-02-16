@@ -1,0 +1,34 @@
+[05-Sep-2022 10:03:24 Asia/Kuala_Lumpur] PHP Fatal error:  Allowed memory size of 31457280 bytes exhausted (tried to allocate 4200000 bytes) in /home/mataorg/public_html/m/core/vendor/intervention/image/src/Intervention/Image/Gd/Decoder.php on line 32
+[05-Sep-2022 10:14:11 Asia/Kuala_Lumpur] PHP Fatal error:  Allowed memory size of 31457280 bytes exhausted (tried to allocate 4200000 bytes) in /home/mataorg/public_html/m/core/vendor/intervention/image/src/Intervention/Image/Gd/Decoder.php on line 32
+[11-Oct-2022 15:06:49 UTC] PHP Warning:  require(/home/mataorg/public_html/m/core/vendor/composer/../../app/Http/Helpers/Helper.php): Failed to open stream: No such file or directory in /home/mataorg/public_html/m/core/vendor/composer/autoload_real.php on line 55
+[11-Oct-2022 15:06:49 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/mataorg/public_html/m/core/vendor/composer/../../app/Http/Helpers/Helper.php' (include_path='.:/opt/cpanel/ea-php80/root/usr/share/pear') in /home/mataorg/public_html/m/core/vendor/composer/autoload_real.php:55
+Stack trace:
+#0 /home/mataorg/public_html/m/core/vendor/composer/autoload_real.php(38): composerRequire4691b200bcf447398fddfc6208a77084('92c1b38d4675fce...', '/home/mataorg/p...')
+#1 /home/mataorg/public_html/m/core/vendor/autoload.php(12): ComposerAutoloaderInit4691b200bcf447398fddfc6208a77084::getLoader()
+#2 /home/mataorg/public_html/m/index.php(24): require('/home/mataorg/p...')
+#3 {main}
+  thrown in /home/mataorg/public_html/m/core/vendor/composer/autoload_real.php on line 55
+[12-May-2023 03:52:57 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 03:52:57 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
+[12-May-2023 03:53:43 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 03:53:43 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
+[12-May-2023 03:53:45 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 03:53:45 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
+[12-May-2023 03:53:46 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 03:53:46 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
+[12-May-2023 03:53:51 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 03:53:51 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
+[12-May-2023 03:53:51 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 03:53:51 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
+[12-May-2023 03:53:53 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 03:53:53 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
+[12-May-2023 03:56:04 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 03:56:04 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
+[12-May-2023 04:06:20 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 04:06:20 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
+[12-May-2023 04:07:52 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 04:07:52 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
+[12-May-2023 04:09:36 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 04:09:36 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
+[12-May-2023 04:09:41 UTC] PHP Warning:  Unknown: failed to open stream: No such file or directory in Unknown on line 0
+[12-May-2023 04:09:41 UTC] PHP Fatal error:  Unknown: Failed opening required '/home/mataorg/public_html/wordfence-waf.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in Unknown on line 0
