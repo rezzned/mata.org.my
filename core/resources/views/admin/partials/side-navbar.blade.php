@@ -613,6 +613,7 @@ id="course"
 
 @elseif(request()->path() == 'admin/subscribers') show
 @elseif(request()->path() == 'admin/mailsubscriber') show
+@elseif(request()->routeIs('admin.register.user-member')) show
 @endif" id="usersManagement">
 <ul class="nav nav-collapse">
 
@@ -630,6 +631,19 @@ id="course"
         <span class="badge badge-info float-right">{{ $email_verified_user && $email_verified_user > 0 ? $email_verified_user : '' }}</span>
     </a>
 </li>
+    <li class="
+        @if(request()->routeIs('admin.register.user-member')) active
+        @elseif(request()->routeIs('register.user.view')) active
+        @elseif(request()->routeIs('register.user.changePass')) active
+        @endif">
+        <a href="{{route('admin.register.user-member')}}">
+            @php
+            $email_verified_user = App\User::where(['email_verified' => 'Yes', 'status' => '0'])->count();
+            @endphp
+            <span class="sub-item">Member Directory</span>
+            <span class="badge badge-info float-right">{{ $email_verified_user && $email_verified_user > 0 ? $email_verified_user : '' }}</span>
+        </a>
+    </li>
     <li class="
     @if(request()->routeIs('admin.membership-tracker')) active
     @endif">

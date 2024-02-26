@@ -2,7 +2,7 @@
 @php
     $subscription = auth()->user()->subscription;
 @endphp
-@if ($subscription && carbon_parse($subscription->expire_date) <= today() && $subscription->status != 3)
+{{-- @if ($subscription && carbon_parse($subscription->expire_date) <= today() && $subscription->status != 3)
 <div class="modal" tabindex="-1" role="dialog" id="membership_notify_model" data-backdrop="static">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content" style="background: #27334f">
@@ -45,5 +45,5 @@
         $('html, body').css({overflow: 'hidden', height: '100%'});
     });
 </script>
-@endif
+@endif --}}
 @endif

@@ -155,13 +155,13 @@
                                                     <p class="text-danger mb-0 mt-2">{{$errors->first('nation')}}</p>
                                                     @endif
                                                 </div>
-                                                <div class="col-lg-6">
+                                                {{-- <div class="col-lg-6">
                                                     <span>{{__('Company Fax')}} *</span>
                                                     <input type="text" name="company_fax" value="{{Request::old('company_email', convertUtf8($user->company_fax))}}">
                                                     @if ($errors->has('company_fax'))
                                                     <p class="text-danger mb-0 mt-2">{{$errors->first('company_fax')}}</p>
                                                     @endif
-                                                </div>
+                                                </div> --}}
                                                 <div id="license_expire_date" class="col-sm-12 mb-3"></div>
                                                 <div class="col-lg-6">
                                                     <span>{{__('License ID')}} *</span>

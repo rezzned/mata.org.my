@@ -1,7 +1,7 @@
 @extends('admin.layout')
 @section('content')
 <div class="page-header">
-    <h4 class="page-title">{{__('Registered Users Details')}}</h4>
+    <h4 class="page-title">{{__('Member Directory Details')}}</h4>
     <ul class="breadcrumbs">
         <li class="nav-home">
             <a href="{{ route('admin.dashboard') }}">
@@ -12,13 +12,13 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="{{ url()->previous() }}">Registered Users</a>
+            <a href="{{ url()->previous() }}">Member Directory</a>
         </li>
         <li class="separator">
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">{{__('Registered Users Details')}}</a>
+            <a href="#">{{__('Member Directory Details')}}</a>
         </li>
     </ul>
 
@@ -51,7 +51,7 @@
                 @enderror
             </div>
         </div>
-        <form action="{{route('register.user.update',$user->id)}}" method="POST">
+        <form action="{{route('register.user-member.update',$user->id)}}" method="POST">
             @csrf
             <div class="row my-3">
                 <div class="col-md-6">
@@ -183,6 +183,7 @@
                         @endif
                     </div>
                 </div>
+
                 <div class="col-md-4">
                     <div class="input-box mb-sm-2">
                         <span>{{__('Member Directory')}} *</span>

@@ -33,6 +33,7 @@ class EventDetail extends Model
         'professional_member',
         'address'
     ];
+    protected $lazy = true;
 
     public function event()
     {
@@ -62,5 +63,10 @@ class EventDetail extends Model
         } else {
             return $this->belongsTo(PaymentGateway::class, 'payment_method');
         }
+    }
+
+    public function attendances()
+    {
+        return $this->hasOne('App\Attendance', 'event_detail_id', 'id');
     }
 }

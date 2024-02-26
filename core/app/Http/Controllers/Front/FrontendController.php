@@ -350,7 +350,7 @@ class FrontendController extends Controller
             $version = 'default';
         }
 
-        dd($data);
+        //dd($data); // remove this reza 18/2/2024
 
         $data['version'] = $version;
         return view('front.event-details', $data);

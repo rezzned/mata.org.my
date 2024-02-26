@@ -47,6 +47,13 @@ class UserController extends Controller
         $data['activeSub'] = Auth::user()->subscription;
         $data['banners'] = SlideBanner::all();
         $data['cpd_point_reqired'] = CpdRequired::where('user_id', auth()->id())->where('year', date('Y'))->first();
+
+        // add by reza 17/2/2024
+        $data['events'] = Event::with(['eventTicket'])
+            ->active()
+            ->where('date', '>', today())
+            ->latest()->get()->count();
+
         // update last_logged_in to current timestamps
         $user = User::find(Auth::user()->id);
         $user->last_logged_in = Carbon::now();
@@ -194,12 +201,18 @@ class UserController extends Controller
         $input = $request->all();
         $data = Auth::user();
         $input['license_expire_notify'] = 'yes';
-        $licenseExpireDate = Carbon::createFromFormat('d-m-Y', request('license_expire_date'));
-        if ($licenseExpireDate->subDays(7)->format('Y-m-d') >=  now()->subDays(7)->format('Y-m-d')) {
-            $input['license_expire_notify'] = 'no';
+
+        // add by reza 17/2/2024
+        if (request('license_expire_date')) {
+            $licenseExpireDate = Carbon::createFromFormat('d-m-Y', request('license_expire_date'));
+            if ($licenseExpireDate->subDays(7)->format('Y-m-d') >=  now()->subDays(7)->format('Y-m-d')) {
+                $input['license_expire_notify'] = 'no';
+            }
+
+            $input['license_expire_date'] = $licenseExpireDate->format('Y-m-d');
+            $input['license_expire_notify_date'] = $licenseExpireDate->subDays(7)->format('Y-m-d');
         }
-        $input['license_expire_date'] = $licenseExpireDate->format('Y-m-d');
-        $input['license_expire_notify_date'] = $licenseExpireDate->subDays(7)->format('Y-m-d');
+
         if ($file) {
             $filename = time() . $file->getClientOriginalName();
             // $file->move('assets/front/img/user/', $name);

@@ -58,6 +58,119 @@ class RegisterUserController extends Controller
         return view('admin.register_user.index', compact('users', 'packages'));
     }
 
+    // add reza 17/2/2024
+    public function indexMember(Request $request)
+    {
+        $term = $request->term;
+        $order = $request->order;
+        $packages = Package::where('status', '!=', 0)->get();
+
+        $users = User::whereHas('subscription', function ($q) {
+            $q->whereHas('current_package', function ($q) {
+                $q->whereIn('type', ['associate_member', 'standard_member']);
+            });
+        });
+        $users = User::when($term, function ($query, $term) {
+            $query->where('username', 'like', '%' . $term . '%')
+                ->orWhere('email', 'like', '%' . $term . '%');
+        })->when($order, function ($q, $order) {
+            if ($order == 'oldest') {
+                return $q->oldest();
+            } elseif ($order == 'a_z') {
+                return $q->orderBy('fname', 'asc');
+            } elseif ($order == 'z_a') {
+                return $q->orderBy('fname', 'desc');
+            } else {
+                return $q->latest();
+            }
+        })->when(!$order, function ($builder, $order) {
+            return $builder->orderBy('id', 'desc');
+        })
+            //->with(['subscription', 'subscription.current_package'])
+            ->whereHas('subscription', function ($q) {
+                $q->whereHas('current_package', function ($q) {
+                    $q->whereIn('type', ['associate_member', 'standard_member']);
+                });
+            })
+            ->paginate(10);
+        return view('admin.member_directory.index', compact('users', 'packages'));
+    }
+
+    public function viewMember($id)
+    {
+        $user = User::findOrFail($id);
+        $orders = $user->orders()->paginate(10);
+        return view('admin.member_directory.details', compact('user', 'orders'));
+    }
+
+    public function editMember($id)
+    {
+        $user = User::With('subscription')->findOrFail($id);
+
+        if ($user->subscription) {
+            $member_directory = 'Active';
+        } else {
+            $member_directory = 'Not Active';
+        }
+
+        return view('admin.member_directory.edit', compact('user', 'member_directory'));
+    }
+
+    public function updateMember(Request $request, $id)
+    {
+
+        if (session()->has('lang')) {
+            $currentLang = Language::where('code', session()->get('lang'))->first();
+        } else {
+            $currentLang = Language::where('is_default', 1)->first();
+        }
+
+        $bs = $currentLang->basic_setting;
+        // $be = $currentLang->basic_extended;
+
+        $messages = [];
+
+        $rules = [
+            'fname' => 'required',
+            'lname' => 'required',
+            'email'           => 'required|email|unique:users,email,' . $id,
+            'date_of_birth'   => 'required',
+            'address'       => 'required',
+            'gender'          => 'required',
+            'nation'          => 'required',
+            'personal_phone'  => 'required',
+            'country'         => 'required',
+        ];
+
+        $request->validate($rules, $messages);
+
+        $user = User::findorfail($id);
+        $input = $request->all();
+
+        if ($request->fname != $user->fname || $request->lname != $user->lname) {
+            $input['username'] = Str::replace(' ', '', $request->fname . $request->lname . rand(0, 999));
+            while (User::where('username', $input['username'])->count()) {
+                $input['username'] =  Str::replace(' ', '', $request->fname . $request->lname . rand(0, 99) . Str::random(2));
+            }
+        }
+
+        // $input['date_of_birth'] = Carbon::parse(Carbon::createFromFormat("d-m-Y", $request->date_of_birth))->format('Y-m-d');
+        $input['date_of_birth'] = Carbon::parse($request->date_of_birth)->format('Y-m-d');
+
+        $user->fill($input)->save();
+        $user->membership_id = 'M' . str_pad($user->id, 5, '0', STR_PAD_LEFT) . strtoupper(Str::random(4));
+        $user->save();
+
+        $user->cpd_required()->firstOrCreate(['year' => date('Y'),], [
+            'required_points' => $bs->def_required_cpd_point,
+        ]);
+
+        Session::flash('success', $user->username . ' status update successfully!');
+        return back();
+    }
+
+    // end 17/2/2024
+
     public function view($id)
     {
         $user = User::findOrFail($id);
@@ -67,8 +180,15 @@ class RegisterUserController extends Controller
 
     public function edit($id)
     {
-        $user = User::findOrFail($id);
-        return view('admin.register_user.edit', compact('user'));
+        $user = User::With('subscription')->findOrFail($id);
+
+        if ($user->subscription) {
+            $member_directory = 'Active';
+        } else {
+            $member_directory = 'Not Active';
+        }
+
+        return view('admin.register_user.edit', compact('user', 'member_directory'));
     }
 
     public function updateMemberId()
@@ -195,6 +315,37 @@ class RegisterUserController extends Controller
         $user->fill($input)->save();
         $user->membership_id = 'M' . str_pad($user->id, 5, '0', STR_PAD_LEFT) . strtoupper(Str::random(4));
         $user->save();
+
+        if ($request->member_directory == 'Active') {
+            $dataSubscription = array(
+                'user_id' => $user->id,
+                'current_package_id' => 82,
+                'status' => 1,
+                'payment_status' => 0,
+                'name' => $user->fname,
+                'email' => $user->email,
+                'current_payment_method' => 'offline',
+                'gateway_type' => 'offline',
+            );
+            $subscription = Subscription::Where('user_id', $user->id)->first();
+            
+            if ($subscription == null) {
+                try {
+                    $subscriptionCreate = new Subscription;
+                    $subscriptionCreate->create($dataSubscription);
+                } catch (\Exception $e) {
+                    // Exception handling
+                    echo "Error: " . $e->getMessage();
+                }
+            }
+        }else{
+            try {
+                $subscriptionDelete = Subscription::Where('user_id', $user->id)->delete();
+            } catch (\Exception $e) {
+                // Exception handling
+                echo "Error: " . $e->getMessage();
+            }
+        }
 
         $user->cpd_required()->firstOrCreate(['year' => date('Y'),], [
             'required_points' => $bs->def_required_cpd_point,
@@ -612,7 +763,7 @@ class RegisterUserController extends Controller
         $cpd = CpdExternalPoint::findOrFail(request('cert'));
         $filePath = storage_path('app/member_external_cert/' . $cpd->certificate);
 
-        if(!file_exists($filePath)) {
+        if (!file_exists($filePath)) {
             abort(404);
         }
 
@@ -706,15 +857,16 @@ class RegisterUserController extends Controller
 
         $sub->save();
 
-//        $user->license_expire_date = $sub->expire_date;
-//        $user->license_expire_notify_date = Carbon::parse($sub->expire_date)->subDays(7);
-//        $user->license_expire_notify = 'no';
-//        $user->save();
+        //        $user->license_expire_date = $sub->expire_date;
+        //        $user->license_expire_notify_date = Carbon::parse($sub->expire_date)->subDays(7);
+        //        $user->license_expire_notify = 'no';
+        //        $user->save();
 
         return redirect()->back();
     }
 
-    public function updateDefReqCpdPoint(Request $request) {
+    public function updateDefReqCpdPoint(Request $request)
+    {
         $request->validate([
             'def_required_cpd_point' => 'required'
         ]);

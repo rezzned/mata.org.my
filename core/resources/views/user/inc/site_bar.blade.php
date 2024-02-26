@@ -33,6 +33,10 @@
                     {{ __('Event History') }}</a>
             </li>
             <li>
+                <a class="@if (request()->path() == 'user/attendance') active @elseif(request()->is('user/attendance/*')) active @endif" href="{{ route('user-attendance') }}">
+                    {{ __('Attendance History') }}</a>
+            </li>
+            <li>
                 <a class="@if (request()->path() == 'user/payments') active @endif" href="{{ route('user-payments') }}">
                     {{ __('My Payments') }}
                 </a>

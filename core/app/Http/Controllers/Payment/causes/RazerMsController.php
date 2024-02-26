@@ -12,6 +12,7 @@ use App\Http\Controllers\Front\CausesController;
 use App\Language;
 use App\PaymentGateway;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use PayPal\Api\Amount;
 use PayPal\Api\Item;
@@ -108,12 +109,25 @@ class RazerMsController extends Controller
 
         $requestUri = join([$this->endpoint, "?", http_build_query($query)]);
 
+        Log::info('-------------- Payment Send To PG ----------------------');
+        $sessionData = session()->all();
+        Log::info('Session Data:', $sessionData);
+        Log::info($request);
+        Log::info('-------------- Payment Send To PG ----------------------');
+
         return redirect($requestUri);
         // return redirect()->back()->with('error', 'Unknown error occurred');
     }
 
     public function successPayment(Request $request)
     {
+        Log::info('-------------- Payment Return From PG ----------------------');
+        $sessionData = session()->all();
+        Log::info('Session Data:', $sessionData);
+        Log::info($request);
+        Log::info(request('oid'));
+        Log::info('-------------- Payment Return From PG ----------------------');
+
         $requestData = Session::get('request');
         $currentLang = session()->has('lang') ?
             (Language::where('code', session()->get('lang'))->first())
@@ -147,29 +161,23 @@ class RazerMsController extends Controller
         }
         // Merchant might issue a requery to PG to double-check payment status
         if ($status == "00") {
+
             $paymentFor = Session::get('paymentFor');
             $response = $request->all();
             $actualAmount = Session::get('actual_amount');
-            if ($paymentFor == "Cause") {
-                $cause = new CausesController;
-                $donation = $cause->store($requestData, $tranID, $response, $actualAmount, $bex);
-                if (!is_null($requestData["email"])) {
-                    $file_name = $cause->makeInvoice($donation);
-                    $cause->sendMailPHPMailer($requestData, $file_name, $be);
-                }
-                session()->flash('success', __('Payment completed!'));
-                Session::forget('request');
-                Session::forget('actual_amount');
-                Session::forget('paymentFor');
-                return redirect()->route('front.cause_details', [$requestData["donation_slug"]]);
-            } elseif ($paymentFor == "Event") {
+            
+            $orderId = Session::get('order_id', request('oid'));
+            $order = OrderPayment::whereItemModel(Event::class)->whereOrderId($orderId)->firstOrFail();
+
+            if($orderId){
                 $event = new EventController;
 
                 $order = OrderPayment::whereItemModel(Event::class)->whereOrderId($orderid)->firstOrFail();
                 //$orderid = str_replace("EVENT_#", '', $orderid);
                 $orderId = $order->model_id;
 
-                $event_details = EventDetail::findOrFail($orderId);
+                $event_details = EventDetail::find($orderId);
+
                 $event_details->trx_id = $tranID;
                 $event_details->transaction_details = json_encode($response);
                 $event_details->status = "Success";
@@ -183,6 +191,40 @@ class RazerMsController extends Controller
                 Session::forget('event_id');
                 return redirect()->route('front.event_details', [$requestData["event_slug"]]);
             }
+
+            // if ($paymentFor == "Cause") {
+            //     $cause = new CausesController;
+            //     $donation = $cause->store($requestData, $tranID, $response, $actualAmount, $bex);
+            //     if (!is_null($requestData["email"])) {
+            //         $file_name = $cause->makeInvoice($donation);
+            //         $cause->sendMailPHPMailer($requestData, $file_name, $be);
+            //     }
+            //     session()->flash('success', __('Payment completed!'));
+            //     Session::forget('request');
+            //     Session::forget('actual_amount');
+            //     Session::forget('paymentFor');
+            //     return redirect()->route('front.cause_details', [$requestData["donation_slug"]]);
+            // } elseif ($paymentFor == "Event") {
+            //     $event = new EventController;
+
+            //     $order = OrderPayment::whereItemModel(Event::class)->whereOrderId($orderid)->firstOrFail();
+            //     //$orderid = str_replace("EVENT_#", '', $orderid);
+            //     $orderId = $order->model_id;
+
+            //     $event_details = EventDetail::findOrFail($orderId);
+            //     $event_details->trx_id = $tranID;
+            //     $event_details->transaction_details = json_encode($response);
+            //     $event_details->status = "Success";
+            //     $event_details->save();
+            //     $file_name = $event->makeInvoice($event_details);
+            //     $event->sendMailPHPMailer($requestData, $file_name, $be);
+            //     session()->flash('success', __('Payment completed! We sent you an email'));
+            //     Session::forget('request');
+            //     Session::forget('paymentFor');
+            //     Session::forget('order_id');
+            //     Session::forget('event_id');
+            //     return redirect()->route('front.event_details', [$requestData["event_slug"]]);
+            // }
         }
         return redirect($cancel_url);
     }
@@ -190,6 +232,11 @@ class RazerMsController extends Controller
     public function cancelPayment()
     {
         $msg = __('Something went wrong. Payment was failed or canceled');
+        Log::info('-------------- Payment Cancel Return From PG ----------------------');
+        $sessionData = session()->all();
+        Log::info('Session Data:', $sessionData);
+        Log::info(request('eid'));
+        Log::info('-------------- Payment Cancel Return From PG ----------------------');
         try {
             $event_id = Session::get('event_id') ?? request('eid');
 

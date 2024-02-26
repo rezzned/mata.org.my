@@ -146,12 +146,21 @@
                                     </div>
                                 </a>
                             </div>
-
-                            <div class="col-md-6 mb-4">
+                            {{-- remove by reza 17/2/2024  --}}
+                            {{-- <div class="col-md-6 mb-4">
                                 <a class="card card-box box-5 member" href="{{ route('user-packages') }}">
                                     <div class="card-info">
                                         <h4>{{__('Membership')}}</h4>
                                         <p>{{ ($activeSub && $activeSub->status==1) ? $activeSub->current_package->title ?? "No membership" : "No membership" }}</p>
+                                    </div>
+                                </a>
+                            </div> --}}
+                            {{-- add by reza 17/2/2024  --}}
+                            <div class="col-md-6 mb-4">
+                                <a class="card card-box box-5 member" href="{{ route('user-upcoming-events') }}">
+                                    <div class="card-info">
+                                        <h4>{{__('Upcoming Event')}}</h4>
+                                        <p>{{ $events }}</p>
                                     </div>
                                 </a>
                             </div>
@@ -174,6 +183,23 @@
                                                 <tr class="">
                                                     <td class="py-1 pl-0 border-0">{{__('First Name')}}:</td>
                                                     <td class="py-1 pl-0 border-0">{{ convertUtf8($user->fname) }}</td>
+                                                </tr>
+                                                
+                                                <tr class="">
+                                                    <td class="py-1 pl-0 border-0">{{__('IC Number')}}:</td>
+                                                    @if($user->idcard_no == NULL)
+                                                    @php 
+                                                        $lastEventDetail = $user->event_details()->latest()->first();
+                                                    @endphp
+                                                        @if($lastEventDetail)
+                                                        <td class="py-1 pl-0 border-0">{{ $lastEventDetail->ic_number }}</td>
+                                                        @else
+                                                        <td class="py-1 pl-0 border-0">-</td>
+
+                                                        @endif
+                                                    @else
+                                                        <td class="py-1 pl-0 border-0">{{ $user->idcard_no }}</td>
+                                                    @endif
                                                 </tr>
                                                 <tr class="">
                                                     <td class="py-1 pl-0 border-0">{{__('Email')}}:</td>
@@ -225,10 +251,10 @@
                                                     <td class="py-1 pl-0 border-0">{{__('Nation')}}:</td>
                                                     <td class="py-1 pl-0 border-0">{{convertUtf8($user->nation ?? "Unknown")}}</td>
                                                 </tr>
-                                                <tr class="">
+                                                {{-- <tr class="">
                                                     <td class="py-1 pl-0 border-0">{{ trans('Company Fax') }}:</td>
                                                     <td class="py-1 pl-0 border-0">{{ $user->company_fax }}</td>
-                                                </tr>
+                                                </tr> --}}
                                             </table>
                                         </div>
                                     </div>

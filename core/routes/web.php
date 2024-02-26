@@ -201,6 +201,10 @@ Route::group(['middleware' => ['web', 'setlang']], function () {
 Route::group(['prefix' => 'user', 'middleware' => ['auth', 'userstatus', 'setlang']], function () {
     // Summernote image upload
     Route::post('/summernote/upload', 'User\SummernoteController@upload')->name('user.summernote.upload');
+    // add reza 18/2/2024 
+    Route::get('/attendance/events', 'User\EventController@attendance')->name('user-attendance');
+    Route::get('/attendance/events/{id}', 'User\EventController@attendanceDetail')->name('user-attendance.detail');
+    Route::get('/attendance/events/save/{id}', 'User\EventController@attendanceSave')->name('user-attendance.save');
 
     Route::get('/dashboard', 'User\UserController@index')->name('user-dashboard');
     Route::get('/notification', 'User\UserController@notification')->name('user-notification');
@@ -216,7 +220,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth', 'userstatus', 'setlan
     Route::get('/orders', 'User\OrderController@index')->name('user-orders');
     Route::get('/order/{id}', 'User\OrderController@orderdetails')->name('user-orders-details');
     Route::get('/events', 'User\EventController@index')->name('user-events');
-    Route::get('/event/{id}', 'User\EventController@eventdetails')->name('user-s');
+    Route::get('/event/{id}', 'User\EventController@eventdetails')->name('user-event-details');
     Route::post('/event/coupon', 'Front\EventController@coupon')->name('front.event.coupon');
 
     Route::get('/donations', 'User\DonationController@index')->name('user-donations');

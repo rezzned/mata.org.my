@@ -68,7 +68,7 @@ class ConfigCacheCommand extends Command
         } catch (Throwable $e) {
             $this->files->delete($configPath);
 
-            //throw new LogicException('Your configuration files are not serializable.', 0, $e); // raja
+            //throw new LogicException('Your configuration files are not serializable.', 0, $e); // open balik nanti reza 17/02/2024
         }
 
         $this->info('Configuration cached successfully!');

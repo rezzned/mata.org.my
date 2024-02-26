@@ -30,6 +30,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Helpers\EventHelper;
 use PDF;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class EventController extends Controller
 {
@@ -217,6 +218,28 @@ class EventController extends Controller
         $data['event'] = Event::findOrFail($id);
         $data['event_categories'] = EventCategory::where('lang_id', $data['event']->lang_id)->where('status', '1')->get();
         $data['abx'] = BasicExtra::select('base_currency_text')->where('language_id', $data['event']->lang_id)->first();
+
+        // Generate the QR code content user-attendance
+        $qrCodeContent = route('user-attendance');
+
+        // Generate the QR code image
+        $qrCode = QrCode::format('svg')->size(150)->generate($qrCodeContent);
+
+        // Specify the absolute file path to save the QR code outside the Laravel project
+        $qrCodePath = 'assets/qrcode/'. $id .'QRCode.svg';
+
+        // Save the QR code image to the specified file path
+        file_put_contents($qrCodePath, $qrCode);
+
+        // Check if the QR code file exists
+        // if (file_exists($qrCodePath)) {
+        //     // The QR code has been successfully generated and saved
+        //     echo "QR code has been created and saved at: " . $qrCodePath;
+        // } else {
+        //     // There was an error generating or saving the QR code
+        //     echo "Failed to create or save the QR code.";
+        // }
+        
         return view('admin.event.event.edit', $data);
     }
 
@@ -808,7 +831,7 @@ class EventController extends Controller
 
         //return view('pdf.custom.training-attend-cert', [ 'data' => (object) $data ]);
 
-        $file = root_path('assets/front/certificate/'.$eventDetail->certificate->certificate_file);
+        $file = root_path('assets/front/certificate/' . $eventDetail->certificate->certificate_file);
 
         if (!file_exists($file)) {
             EventHelper::makeCertificate($data);
@@ -823,7 +846,7 @@ class EventController extends Controller
 
         $data = $this->getCertificateData($eventDetail);
 
-        $file = root_path('assets/front/certificate/'.$eventDetail->certificate->certificate_file);
+        $file = root_path('assets/front/certificate/' . $eventDetail->certificate->certificate_file);
 
         EventHelper::makeCertificate($data);
 

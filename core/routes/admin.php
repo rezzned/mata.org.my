@@ -664,6 +664,14 @@ Route::namespace('Admin')->group(function () {
             Route::get('register/user/add', 'RegisterUserController@addUser')->name('admin.register.user.add');
             Route::post('register/user/save', 'RegisterUserController@saveUser')->name('admin.register.user.save');
             Route::get('register/users', 'RegisterUserController@index')->name('admin.register.user');
+            // add reza 17/2/2024
+            Route::get('register/user-member/add', 'RegisterUserController@addUserMember')->name('admin.register.user-member.add');
+            Route::post('register/user-member/save', 'RegisterUserController@saveUserMember')->name('admin.register.user-member.save');
+            Route::get('register/users-member', 'RegisterUserController@indexMember')->name('admin.register.user-member');
+            Route::get('register/users-member/details/{id}', 'RegisterUserController@viewMember')->name('register.user-member.view');
+            Route::get('register/users-member/edit/{id}', 'RegisterUserController@editMember')->name('register.user-member.edit');
+            Route::post('register/user-member/update/{id}', 'RegisterUserController@update')->name('register.user-member.update');
+
             Route::post('register/users/ban', 'RegisterUserController@userban')->name('register.user.ban');
             Route::post('register/users/email', 'RegisterUserController@emailStatus')->name('register.user.email');
             Route::get('register/users/details/{id}', 'RegisterUserController@view')->name('register.user.view');

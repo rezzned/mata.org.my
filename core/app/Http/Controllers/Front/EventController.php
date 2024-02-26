@@ -19,6 +19,7 @@ use App\Http\Controllers\Payment\causes\StripeController;
 use App\Http\Helpers\KreativMailer;
 use App\Jobs\EventStatusEmailJob;
 use App\Rules\LimitEventBooking;
+use App\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +36,9 @@ class EventController extends Controller
         // $rules['ic_number'] = ['required', new LimitEventBooking($request->event_id)];
         try {
             $gateway = OfflineGateway::find($request->payment_method);
+
+            $updatDetail = User::find(auth()->user()->id)->update(['idcard_no' => $request->ic_number]);
+
             if (isset($gateway) && $gateway->is_receipt == 1) {
                 $rules['receipt'] = [
                     'required',
@@ -54,6 +58,7 @@ class EventController extends Controller
 
             $event = Event::findOrFail($request->event_id);
             $event_ticket = EventTicket::findOrFail($request->event_ticket_id);
+            
             if ($event_ticket->available < $request->ticket_quantity) {
                 if ($event->available_tickets == 0 || $event->available_tickets < 0) {
                     $request->session()->flash('error', 'No Tickets Available');
