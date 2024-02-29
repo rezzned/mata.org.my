@@ -74,13 +74,6 @@
                                                     @enderror
                                                 </div>
                                                 <div class="col-lg-6">
-                                                    <span>{{__('Username')}} *</span>
-                                                    <input type="text" class="form_control" placeholder="{{__('Username')}}" name="username" value="{{convertUtf8($user->username)}}" value="{{Request::old('username')}}">
-                                                    @error('username')
-                                                        <p class="text-danger mb-4">{{ convertUtf8($message) }}</p>
-                                                    @enderror
-                                                </div>
-                                                <div class="col-lg-6">
                                                     <span>{{__('Email')}} *</span>
                                                     <input type="email" class="form_control" placeholder="{{__('Email')}}" name="email" disabled value="{{convertUtf8($user->email)}}" value="{{Request::old('email')}}">
                                                 </div>
@@ -89,6 +82,24 @@
                                                     <input type="text" class="form_control" placeholder="{{__('Phone')}}" name="personal_phone" value="{{$user->personal_phone}}" value="{{Request::old('personal_phone')}}">
                                                     @error('number')
                                                     <p class="text-danger mb-4">{{ convertUtf8($message) }}</p>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <span>{{__('Username')}} *</span>
+                                                    <input type="text" class="form_control" placeholder="{{__('Username')}}" name="username" value="{{convertUtf8($user->username)}}" value="{{Request::old('username')}}">
+                                                    @error('username')
+                                                        <p class="text-danger mb-4">{{ convertUtf8($message) }}</p>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <span>{{__('NO IC')}} *</span>
+                                                    <input type="number" class="form_control" placeholder="{{__('NO IC')}}" name="idcard_no" value="{{convertUtf8($user->idcard_no)}}" value="{{Request::old('idcard_no')}}">
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <span>{{__('Address')}} *</span>
+                                                    <input type="text" name="address" class="form_control" placeholder="{{__('Address')}}" value="{{old('address', convertUtf8($user->address))}}">
+                                                    @error('address')
+                                                    <p class="text-danger">{{ convertUtf8($message) }}</p>
                                                     @enderror
                                                 </div>
                                                 <div class="col-lg-6">
@@ -114,13 +125,6 @@
                                                     <input type="text" class="form_control" placeholder="{{__('Country')}}" name="country" value="{{convertUtf8($user->country)}}" value="{{Request::old('country')}}">
                                                     @error('country')
                                                     <p class="text-danger mb-4">{{ convertUtf8($message) }}</p>
-                                                    @enderror
-                                                </div>
-                                                <div class="col-lg-12">
-                                                    <span>{{__('Address')}} *</span>
-                                                    <input type="text" name="address" class="form_control" placeholder="{{__('Address')}}" value="{{old('address', convertUtf8($user->address))}}">
-                                                    @error('address')
-                                                    <p class="text-danger">{{ convertUtf8($message) }}</p>
                                                     @enderror
                                                 </div>
                                                 <div class="col-lg-6">

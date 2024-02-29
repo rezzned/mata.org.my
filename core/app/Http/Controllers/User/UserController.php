@@ -188,6 +188,7 @@ class UserController extends Controller
             'state' => 'required',
             'country' => 'required',
             'address' => 'required',
+            'idcard_no' => 'required',
             // 'photo' =>  ['dimensions: ratio=1/1'], */
         ];
 
@@ -201,6 +202,8 @@ class UserController extends Controller
         $input = $request->all();
         $data = Auth::user();
         $input['license_expire_notify'] = 'yes';
+        // add reza 27/2/2024
+        $input['idcard_no'] = $request->idcard_no;
 
         // add by reza 17/2/2024
         if (request('license_expire_date')) {

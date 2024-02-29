@@ -17,6 +17,21 @@ Route::get('password', function() {
     return Hash::make('password');
 });
 
+Route::get('/test-email', function () {
+    $recipient = 'rajaadzreen.vm@gmail.com';
+    $subject = 'Test Email';
+    $message = 'This is a test email from my Laravel application.';
+    $headers = 'From: sender@example.com';
+
+    $result = mail($recipient, $subject, $message, $headers);
+
+    if ($result) {
+        return 'Email sent successfully.';
+    } else {
+        return 'Failed to send email.';
+    }
+});
+
 Route::fallback(function () {
     return view('errors.404');
 });

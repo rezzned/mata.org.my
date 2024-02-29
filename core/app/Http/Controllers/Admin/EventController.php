@@ -226,7 +226,7 @@ class EventController extends Controller
         $qrCode = QrCode::format('svg')->size(150)->generate($qrCodeContent);
 
         // Specify the absolute file path to save the QR code outside the Laravel project
-        $qrCodePath = 'assets/qrcode/'. $id .'QRCode.svg';
+        $qrCodePath = 'assets/qrcode/' . $id . 'QRCode.svg';
 
         // Save the QR code image to the specified file path
         file_put_contents($qrCodePath, $qrCode);
@@ -239,7 +239,7 @@ class EventController extends Controller
         //     // There was an error generating or saving the QR code
         //     echo "Failed to create or save the QR code.";
         // }
-        
+
         return view('admin.event.event.edit', $data);
     }
 
@@ -781,6 +781,116 @@ class EventController extends Controller
         return view('admin.event.report', $data);
     }
 
+    public function certificate(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date;
+        $status = 'success';
+        // $paymentMethod = $request->payment_method;
+
+        $eventIds = EventDetail::select('event_id')->distinct();
+        $data['events'] = Event::query()
+            ->select(['id', 'title'])
+            ->whereIn('id', $eventIds)
+            ->get();
+
+        $bookings = EventDetail::query()
+            ->with(['event',])
+            ->when($fromDate, function ($query, $fromDate) {
+                return $query->whereDate('created_at', '>=', Carbon::parse($fromDate));
+            })
+            ->when($toDate, function ($query, $toDate) {
+                return $query->whereDate('created_at', '<=', Carbon::parse($toDate));
+            })
+            // ->when($paymentMethod, function ($query, $paymentMethod) {
+            //     return $query->where('payment_method', $paymentMethod);
+            // })
+            ->when($status, function ($query, $status) {
+                return $query->where('status', $status);
+            })
+            ->when($request->event, function ($query, $event) {
+                return $query->where('event_id', $event);
+            })
+            ->select([
+                'transaction_id',
+                'transaction_details',
+                'event_id',
+                'id',
+                'name',
+                'email',
+                'phone',
+                'amount',
+                'quantity',
+                'payment_method',
+                'status',
+                'created_at',
+                'attendance',
+                'user_id'
+            ])
+            ->orderBy('id', 'DESC');
+
+        Session::put('event_booking_report', $bookings->get());
+        $data['bookings'] = $bookings->paginate(10);
+
+        $data['onPms'] = PaymentGateway::where('status', 1)->get();
+        $data['offPms'] = OfflineGateway::where('event_checkout_status', 1)->get();
+
+        if ($request->send_all) {
+            dd('masuk');
+        }
+
+        return view('admin.event.certificate', $data);
+    }
+
+    public function eventReportAttendanceWithoutRequest(Request $request)
+    {
+
+        $eventDetails = EventDetail::where('event_id', request()->query('id'))->get();
+
+        $data = array(
+            'attendance' => 'attend',
+            'refund_note' => ''
+        );
+
+        
+        foreach ($eventDetails as $eventDetailV) {
+
+            $eventDetail = EventDetail::findorfail($eventDetailV->id)->load(['event']);
+            
+            if (!$eventDetail->event->short_form) {
+                Session::flash('error', 'Short form not updated yet! Please update short form first.');
+                return back();
+            }
+
+            $eventDetail->update(['attendance' => $data['attendance'], 'refund_note' => $data['refund_note']]);
+
+            if (request('attendance') == 'attend') {
+                updateCpdPoint($eventDetail->user_id, $eventDetail->cpd_points);
+                $notifTitle = __('You attended this event and your CPD points increasing ') . $eventDetail->cpd_points;
+
+                if ($eventDetail->user) {
+                    $eventDetail->user->notify(new EventAttendNotify($notifTitle, $eventDetail));
+                }
+
+                $certificate = $this->createCertificate($eventDetail);
+
+                $data = $this->certificateDataArray($eventDetail, $certificate);
+
+                EventHelper::makeCertificate($data);
+
+                dispatch(new SendEventAttendCertificate($data));
+            } elseif (request('attendance') == 'not_attend') {
+                $notifTitle = __('You not attended this event and your CPD points are not increase.') . request('refund_note');
+                if ($eventDetail->user) {
+                    $eventDetail->user->notify(new EventAttendNotify($notifTitle, $eventDetail));
+                }
+            }
+        }
+
+        Session::flash('success', 'Event attendance status change successfully!');
+        return back();
+    }
+
     public function eventReportAttendance(Request $request)
     {
         $request->validate([
@@ -789,7 +899,7 @@ class EventController extends Controller
         ]);
 
         $eventDetail = EventDetail::findorfail(request('id'))->load(['event']);
-
+        // dd($eventDetail);
         if (!$eventDetail->event->short_form) {
             Session::flash('error', 'Short form not updated yet! Please update short form first.');
             return back();

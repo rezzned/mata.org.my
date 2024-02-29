@@ -561,8 +561,10 @@ Route::namespace('Admin')->group(function () {
             Route::post('/events/payment/bulk-delete', 'EventController@paymentLogBulkDelete')->name('admin.event.payment.bulk.delete');
             Route::post('/events/payment-log-update', 'EventController@paymentLogUpdate')->name('admin.event.payment.log.update');
             Route::get('/events/report', 'EventController@report')->name('admin.event.report');
+            Route::get('/events/certificate', 'EventController@certificate')->name('admin.event.certificate');
             Route::get('/events/export', 'EventController@exportReport')->name('admin.event.export');
             Route::post('/events/export/attendance', 'EventController@eventReportAttendance')->name('admin.event.attendance');
+            Route::get('/events/export/attendance/send-all', 'EventController@eventReportAttendanceWithoutRequest')->name('admin.event.attendance.send-all');
             Route::post('/events/certificate/download/{event_detail_id}', 'EventController@eventReportCertificateDownload')->name('admin.event.certificate.download');
             Route::post('/events/certificate/regen/{event_detail_id}', 'EventController@eventReportCertificateRegenerate')->name('admin.event.certificate.regenerate');
         });

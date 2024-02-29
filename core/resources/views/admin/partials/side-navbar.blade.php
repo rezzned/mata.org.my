@@ -574,6 +574,11 @@ id="course"
         <span class="badge badge-info float-right">{{ $event_booking ?: '' }}</span>
     </a>
 </li>
+<li class="@if(request()->path() == 'admin/events/certificate') active @endif">
+    <a href="{{route('admin.event.certificate')}}">
+        <span class="sub-item">Certificate</span>
+    </a>
+</li>
 <li class="@if(request()->path() == 'admin/events/report') active @endif">
     <a href="{{route('admin.event.report')}}">
         <span class="sub-item">Report</span>
